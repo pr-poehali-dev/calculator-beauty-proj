@@ -35,6 +35,29 @@ export default function Index() {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const { toast } = useToast();
 
+  const playThemeSound = () => {
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    oscillator.frequency.value = isDarkMode ? 800 : 400;
+    oscillator.type = 'sine';
+    
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+    
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.2);
+  };
+
+  const toggleTheme = () => {
+    playThemeSound();
+    setIsDarkMode(!isDarkMode);
+  };
+
   const handleNumber = (num: string) => {
     if (newNumber) {
       setDisplay(num);
@@ -226,10 +249,10 @@ export default function Index() {
             <Button 
               variant="outline" 
               size="lg" 
-              className="rounded-full"
-              onClick={() => setIsDarkMode(!isDarkMode)}
+              className="rounded-full transition-all hover:scale-110 active:scale-95"
+              onClick={toggleTheme}
             >
-              <Icon name={isDarkMode ? "Sun" : "Moon"} className="mr-2" />
+              <Icon name={isDarkMode ? "Sun" : "Moon"} className="mr-2 transition-transform duration-500 hover:rotate-180" />
               {isDarkMode ? 'Светлая' : 'Тёмная'}
             </Button>
             
