@@ -217,6 +217,16 @@ export default function Index() {
               variant="outline" 
               size="lg" 
               className="rounded-full"
+              onClick={() => window.open('https://t.me/Kalkylator_PRO', '_blank')}
+            >
+              <Icon name="Send" className="mr-2" />
+              Наш телеграмм
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              size="lg" 
+              className="rounded-full"
               onClick={() => setIsDarkMode(!isDarkMode)}
             >
               <Icon name={isDarkMode ? "Sun" : "Moon"} className="mr-2" />
