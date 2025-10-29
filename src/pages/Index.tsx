@@ -486,31 +486,38 @@ export default function Index() {
                     <Button onClick={() => handleOperation('÷')} className={operationButtonClass}>÷</Button>
                   </div>
                   
-                  <div className="grid grid-cols-4 gap-3">
+                  <div className="grid grid-cols-4 gap-2 sm:gap-3">
                     <Button onClick={() => handleScientific('log')} className={specialButtonClass}>log</Button>
                     <Button onClick={() => handleScientific('ln')} className={specialButtonClass}>ln</Button>
+                    <Button onClick={() => handleScientific('√')} className={specialButtonClass}>√</Button>
                     <Button onClick={() => handleOperation('^')} className={specialButtonClass}>x^y</Button>
+                  </div>
+                  
+                  <div className="grid grid-cols-4 gap-2 sm:gap-3">
+                    <Button onClick={() => handleNumber('7')} className={numberButtonClass}>7</Button>
+                    <Button onClick={() => handleNumber('8')} className={numberButtonClass}>8</Button>
+                    <Button onClick={() => handleNumber('9')} className={numberButtonClass}>9</Button>
                     <Button onClick={() => handleOperation('×')} className={operationButtonClass}>×</Button>
                   </div>
                   
-                  <div className="grid grid-cols-4 gap-3">
-                    <Button onClick={() => handleScientific('√')} className={specialButtonClass}>√</Button>
-                    <Button onClick={() => handleNumber('(')} className={numberButtonClass}>(</Button>
-                    <Button onClick={() => handleNumber(')')} className={numberButtonClass}>)</Button>
+                  <div className="grid grid-cols-4 gap-2 sm:gap-3">
+                    <Button onClick={() => handleNumber('4')} className={numberButtonClass}>4</Button>
+                    <Button onClick={() => handleNumber('5')} className={numberButtonClass}>5</Button>
+                    <Button onClick={() => handleNumber('6')} className={numberButtonClass}>6</Button>
                     <Button onClick={() => handleOperation('-')} className={operationButtonClass}>−</Button>
                   </div>
                   
-                  <div className="grid grid-cols-4 gap-3">
-                    <Button onClick={clear} className={specialButtonClass}>C</Button>
-                    <Button onClick={backspace} className={specialButtonClass}>
-                      <Icon name="Delete" />
-                    </Button>
-                    <Button onClick={handleDecimal} className={numberButtonClass}>.</Button>
+                  <div className="grid grid-cols-4 gap-2 sm:gap-3">
+                    <Button onClick={() => handleNumber('1')} className={numberButtonClass}>1</Button>
+                    <Button onClick={() => handleNumber('2')} className={numberButtonClass}>2</Button>
+                    <Button onClick={() => handleNumber('3')} className={numberButtonClass}>3</Button>
                     <Button onClick={() => handleOperation('+')} className={operationButtonClass}>+</Button>
                   </div>
                   
-                  <div className="grid grid-cols-4 gap-3">
-                    <Button onClick={() => handleNumber('0')} className={`${numberButtonClass} col-span-3`}>0</Button>
+                  <div className="grid grid-cols-4 gap-2 sm:gap-3">
+                    <Button onClick={clear} className={specialButtonClass}>C</Button>
+                    <Button onClick={() => handleNumber('0')} className={numberButtonClass}>0</Button>
+                    <Button onClick={handleDecimal} className={numberButtonClass}>.</Button>
                     <Button onClick={calculate} className={`${buttonClass} bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-primary-foreground`}>=</Button>
                   </div>
                 </TabsContent>
