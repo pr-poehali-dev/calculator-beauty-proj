@@ -35,22 +35,30 @@ export default function Index() {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const { toast } = useToast();
 
+  const playSound = (frequency: number, duration: number = 0.1, type: OscillatorType = 'sine') => {
+    try {
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.value = frequency;
+      oscillator.type = type;
+      
+      gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + duration);
+    } catch (e) {
+      // Ignore audio errors
+    }
+  };
+
   const playThemeSound = () => {
-    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-    
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-    
-    oscillator.frequency.value = isDarkMode ? 800 : 400;
-    oscillator.type = 'sine';
-    
-    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-    
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.2);
+    playSound(isDarkMode ? 800 : 400, 0.2);
   };
 
   const toggleTheme = () => {
@@ -59,6 +67,7 @@ export default function Index() {
   };
 
   const handleNumber = (num: string) => {
+    playSound(300, 0.05);
     if (newNumber) {
       setDisplay(num);
       setNewNumber(false);
@@ -68,6 +77,7 @@ export default function Index() {
   };
 
   const handleDecimal = () => {
+    playSound(350, 0.05);
     if (!display.includes('.')) {
       setDisplay(display + '.');
       setNewNumber(false);
@@ -75,6 +85,7 @@ export default function Index() {
   };
 
   const handleOperation = (op: Operation) => {
+    playSound(500, 0.08);
     const currentValue = parseFloat(display);
     
     if (previousValue !== null && !newNumber) {
@@ -87,6 +98,7 @@ export default function Index() {
   };
 
   const handleScientific = (func: 'sin' | 'cos' | 'tan' | 'log' | 'ln' | '√') => {
+    playSound(600, 0.1);
     const value = parseFloat(display);
     let result: number;
 
@@ -122,6 +134,7 @@ export default function Index() {
 
   const calculate = () => {
     if (previousValue === null || operation === null) return;
+    playSound(700, 0.15, 'square');
 
     const current = parseFloat(display);
     let result: number;
@@ -205,6 +218,7 @@ export default function Index() {
   };
 
   const clear = () => {
+    playSound(200, 0.1, 'sawtooth');
     setDisplay('0');
     setPreviousValue(null);
     setOperation(null);
@@ -212,6 +226,7 @@ export default function Index() {
   };
 
   const backspace = () => {
+    playSound(250, 0.08);
     if (display.length > 1) {
       setDisplay(display.slice(0, -1));
     } else {
@@ -406,9 +421,23 @@ export default function Index() {
               </div>
 
               <Tabs defaultValue="basic" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-3 sm:mb-4 rounded-full p-1">
-                  <TabsTrigger value="basic" className="rounded-full text-sm sm:text-base">Базовый</TabsTrigger>
-                  <TabsTrigger value="scientific" className="rounded-full text-sm sm:text-base">Научный</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-2 mb-3 sm:mb-4 rounded-full p-1 bg-gradient-to-r from-primary/20 to-secondary/20 border-2 border-primary/30">
+                  <TabsTrigger 
+                    value="basic" 
+                    className="rounded-full text-sm sm:text-base data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-secondary data-[state=active]:text-primary-foreground transition-all duration-300 data-[state=active]:scale-105 data-[state=active]:shadow-lg"
+                    onClick={() => playSound(450, 0.1)}
+                  >
+                    <Icon name="Calculator" className="mr-1 sm:mr-2" size={16} />
+                    Базовый
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="scientific" 
+                    className="rounded-full text-sm sm:text-base data-[state=active]:bg-gradient-to-r data-[state=active]:from-secondary data-[state=active]:to-accent data-[state=active]:text-secondary-foreground transition-all duration-300 data-[state=active]:scale-105 data-[state=active]:shadow-lg"
+                    onClick={() => playSound(550, 0.1)}
+                  >
+                    <Icon name="Atom" className="mr-1 sm:mr-2" size={16} />
+                    Научный
+                  </TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="basic" className="space-y-2 sm:space-y-3">
