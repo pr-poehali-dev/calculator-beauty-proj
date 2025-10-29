@@ -219,27 +219,35 @@ export default function Index() {
     }
   };
 
-  const buttonClass = "h-16 text-lg font-semibold rounded-full transition-all hover:scale-105 active:scale-95";
+  const buttonClass = "h-12 sm:h-16 text-base sm:text-lg font-semibold rounded-full transition-all hover:scale-105 active:scale-95";
   const numberButtonClass = `${buttonClass} bg-card hover:bg-card/80 text-foreground`;
   const operationButtonClass = `${buttonClass} bg-secondary/20 hover:bg-secondary/30 text-secondary-foreground`;
   const specialButtonClass = `${buttonClass} bg-accent/20 hover:bg-accent/30 text-accent-foreground`;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-4 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-2 sm:p-4 flex items-center justify-center">
       <div className="w-full max-w-5xl">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-3">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            <h1 className="text-2xl sm:text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
               Калькулятор Pro
             </h1>
-            <p className="text-muted-foreground mt-1">Научный калькулятор с расширенными функциями</p>
+            <p className="text-muted-foreground mt-1 text-sm sm:text-base">Научный калькулятор с расширенными функциями</p>
           </div>
           
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
             <Button 
               variant="outline" 
-              size="lg" 
-              className="rounded-full"
+              size="sm"
+              className="rounded-full sm:hidden"
+              onClick={() => window.open('https://t.me/Kalkylator_PRO', '_blank')}
+            >
+              <Icon name="Send" size={16} />
+            </Button>
+            <Button 
+              variant="outline" 
+              size="default"
+              className="rounded-full hidden sm:flex"
               onClick={() => window.open('https://t.me/Kalkylator_PRO', '_blank')}
             >
               <Icon name="Send" className="mr-2" />
@@ -248,8 +256,16 @@ export default function Index() {
             
             <Button 
               variant="outline" 
-              size="lg" 
-              className="rounded-full transition-all hover:scale-110 active:scale-95"
+              size="sm" 
+              className="rounded-full transition-all hover:scale-110 active:scale-95 sm:hidden"
+              onClick={toggleTheme}
+            >
+              <Icon name={isDarkMode ? "Sun" : "Moon"} size={16} />
+            </Button>
+            <Button 
+              variant="outline" 
+              size="default" 
+              className="rounded-full transition-all hover:scale-110 active:scale-95 hidden sm:flex"
               onClick={toggleTheme}
             >
               <Icon name={isDarkMode ? "Sun" : "Moon"} className="mr-2 transition-transform duration-500 hover:rotate-180" />
@@ -264,12 +280,17 @@ export default function Index() {
               }
             }}>
               <SheetTrigger asChild>
-                <Button variant="outline" size="lg" className="rounded-full">
+                <Button variant="outline" size="sm" className="rounded-full sm:hidden">
+                  <Icon name="Settings" size={16} />
+                </Button>
+              </SheetTrigger>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="default" className="rounded-full hidden sm:flex">
                   <Icon name="Settings" className="mr-2" />
                   Админ-панель
                 </Button>
               </SheetTrigger>
-              <SheetContent className="w-[400px] sm:w-[540px]">
+              <SheetContent className="w-[90vw] sm:w-[400px] md:w-[540px]">
                 <SheetHeader>
                   <SheetTitle>Панель администратора</SheetTitle>
                 </SheetHeader>
@@ -327,7 +348,7 @@ export default function Index() {
         </div>
 
         <AlertDialog open={showPasswordDialog} onOpenChange={setShowPasswordDialog}>
-          <AlertDialogContent className="rounded-3xl">
+          <AlertDialogContent className="rounded-3xl w-[90vw] sm:w-full max-w-md">
             <AlertDialogHeader>
               <AlertDialogTitle>Вход в админ-панель</AlertDialogTitle>
               <AlertDialogDescription>
@@ -350,7 +371,7 @@ export default function Index() {
         </AlertDialog>
 
         <AlertDialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
-          <AlertDialogContent className="rounded-3xl">
+          <AlertDialogContent className="rounded-3xl w-[90vw] sm:w-full max-w-md">
             <AlertDialogHeader>
               <AlertDialogTitle>Сохранить пример?</AlertDialogTitle>
               <AlertDialogDescription>
@@ -370,28 +391,28 @@ export default function Index() {
           </AlertDialogContent>
         </AlertDialog>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           <div className="lg:col-span-2">
-            <Card className="p-6 backdrop-blur-lg bg-card/50 border-2 rounded-3xl shadow-2xl">
-              <div className="mb-6 p-6 bg-gradient-to-br from-muted/30 to-muted/10 rounded-2xl border border-border/50">
+            <Card className="p-3 sm:p-6 backdrop-blur-lg bg-card/50 border-2 rounded-3xl shadow-2xl">
+              <div className="mb-4 sm:mb-6 p-4 sm:p-6 bg-gradient-to-br from-muted/30 to-muted/10 rounded-2xl border border-border/50">
                 <div className="text-right">
                   {operation && previousValue !== null && (
-                    <div className="text-sm text-muted-foreground mb-1">
+                    <div className="text-xs sm:text-sm text-muted-foreground mb-1">
                       {previousValue} {operation}
                     </div>
                   )}
-                  <div className="text-5xl font-bold text-foreground break-all">{display}</div>
+                  <div className="text-3xl sm:text-5xl font-bold text-foreground break-all">{display}</div>
                 </div>
               </div>
 
               <Tabs defaultValue="basic" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-4 rounded-full p-1">
-                  <TabsTrigger value="basic" className="rounded-full">Базовый</TabsTrigger>
-                  <TabsTrigger value="scientific" className="rounded-full">Научный</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-2 mb-3 sm:mb-4 rounded-full p-1">
+                  <TabsTrigger value="basic" className="rounded-full text-sm sm:text-base">Базовый</TabsTrigger>
+                  <TabsTrigger value="scientific" className="rounded-full text-sm sm:text-base">Научный</TabsTrigger>
                 </TabsList>
                 
-                <TabsContent value="basic" className="space-y-3">
-                  <div className="grid grid-cols-4 gap-3">
+                <TabsContent value="basic" className="space-y-2 sm:space-y-3">
+                  <div className="grid grid-cols-4 gap-2 sm:gap-3">
                     <Button onClick={clear} className={specialButtonClass}>C</Button>
                     <Button onClick={backspace} className={specialButtonClass}>
                       <Icon name="Delete" />
@@ -428,8 +449,8 @@ export default function Index() {
                   </div>
                 </TabsContent>
                 
-                <TabsContent value="scientific" className="space-y-3">
-                  <div className="grid grid-cols-4 gap-3">
+                <TabsContent value="scientific" className="space-y-2 sm:space-y-3">
+                  <div className="grid grid-cols-4 gap-2 sm:gap-3">
                     <Button onClick={() => handleScientific('sin')} className={specialButtonClass}>sin</Button>
                     <Button onClick={() => handleScientific('cos')} className={specialButtonClass}>cos</Button>
                     <Button onClick={() => handleScientific('tan')} className={specialButtonClass}>tan</Button>
@@ -468,13 +489,13 @@ export default function Index() {
             </Card>
           </div>
 
-          <div className="space-y-6">
-            <Card className="p-6 rounded-3xl backdrop-blur-lg bg-card/50 border-2">
+          <div className="space-y-4 sm:space-y-6">
+            <Card className="p-4 sm:p-6 rounded-3xl backdrop-blur-lg bg-card/50 border-2">
               <div className="flex items-center gap-2 mb-4">
-                <Icon name="History" className="text-primary" />
-                <h2 className="text-lg font-semibold">История</h2>
+                <Icon name="History" className="text-primary" size={20} />
+                <h2 className="text-base sm:text-lg font-semibold">История</h2>
               </div>
-              <ScrollArea className="h-[400px]">
+              <ScrollArea className="h-[300px] sm:h-[400px]">
                 {history.length === 0 ? (
                   <div className="text-center text-muted-foreground py-12">
                     <Icon name="Calculator" className="mx-auto mb-2" size={48} />
@@ -498,13 +519,13 @@ export default function Index() {
             </Card>
 
             {showAd && (
-              <Card className="p-6 rounded-3xl bg-gradient-to-br from-primary/10 to-secondary/10 border-2 border-primary/20">
-                <Badge className="mb-3 rounded-full">Реклама</Badge>
-                <h3 className="text-lg font-semibold mb-2">Премиум функции</h3>
-                <p className="text-sm text-muted-foreground mb-4">
+              <Card className="p-4 sm:p-6 rounded-3xl bg-gradient-to-br from-primary/10 to-secondary/10 border-2 border-primary/20">
+                <Badge className="mb-3 rounded-full text-xs">Реклама</Badge>
+                <h3 className="text-base sm:text-lg font-semibold mb-2">Премиум функции</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground mb-4">
                   Получите доступ к графикам, матрицам и сохранению в облаке
                 </p>
-                <Button className="w-full rounded-full bg-gradient-to-r from-primary to-secondary hover:opacity-90">
+                <Button className="w-full rounded-full bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-sm">
                   Узнать больше
                 </Button>
               </Card>
@@ -513,14 +534,14 @@ export default function Index() {
         </div>
 
         {showAd && (
-          <Card className="mt-6 p-6 rounded-3xl bg-gradient-to-r from-accent/10 via-primary/10 to-secondary/10 border-2 border-accent/20 text-center">
-            <div className="flex items-center justify-center gap-4">
-              <Icon name="Sparkles" className="text-primary" size={32} />
-              <div className="text-left">
-                <h3 className="text-xl font-bold">Улучшите свои расчёты</h3>
-                <p className="text-sm text-muted-foreground">Профессиональные инструменты для студентов и инженеров</p>
+          <Card className="mt-4 sm:mt-6 p-4 sm:p-6 rounded-3xl bg-gradient-to-r from-accent/10 via-primary/10 to-secondary/10 border-2 border-accent/20 text-center">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+              <Icon name="Sparkles" className="text-primary" size={28} />
+              <div className="text-center sm:text-left flex-1">
+                <h3 className="text-lg sm:text-xl font-bold">Улучшите свои расчёты</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground">Профессиональные инструменты для студентов и инженеров</p>
               </div>
-              <Button size="lg" className="rounded-full bg-gradient-to-r from-primary to-secondary hover:opacity-90 ml-auto">
+              <Button size="default" className="rounded-full bg-gradient-to-r from-primary to-secondary hover:opacity-90 w-full sm:w-auto text-sm">
                 Попробовать бесплатно
               </Button>
             </div>
