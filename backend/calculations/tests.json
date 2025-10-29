@@ -1,0 +1,29 @@
+{
+  "tests": [
+    {
+      "name": "Get all calculations",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "calculations": "array"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Save new calculation",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "expression": "2 + 2",
+        "result": "4"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "id": "number",
+        "message": "string"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

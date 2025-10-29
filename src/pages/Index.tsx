@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -8,6 +8,9 @@ import Icon from '@/components/ui/icon';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
 
 type Operation = '+' | '-' | '×' | '÷' | 'sin' | 'cos' | 'tan' | 'log' | 'ln' | '^' | '√' | '%' | null;
 
@@ -24,6 +27,13 @@ export default function Index() {
   const [newNumber, setNewNumber] = useState(true);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [showAd, setShowAd] = useState(true);
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [lastCalculation, setLastCalculation] = useState<{ expression: string; result: string } | null>(null);
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
+  const [password, setPassword] = useState('');
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true);
+  const { toast } = useToast();
 
   const handleNumber = (num: string) => {
     if (newNumber) {
@@ -125,8 +135,50 @@ export default function Index() {
     setNewNumber(true);
   };
 
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', isDarkMode);
+  }, [isDarkMode]);
+
   const addToHistory = (expression: string, result: string) => {
     setHistory([{ expression, result, timestamp: new Date() }, ...history.slice(0, 19)]);
+    setLastCalculation({ expression, result });
+    setShowSaveDialog(true);
+  };
+
+  const saveToDatabase = async () => {
+    if (!lastCalculation) return;
+    
+    try {
+      const response = await fetch('https://functions.poehali.dev/8e0ece63-d154-4300-adbd-033e7ccaed6f', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(lastCalculation)
+      });
+      
+      if (response.ok) {
+        toast({ title: 'Сохранено!', description: 'Пример успешно сохранён в базу данных' });
+      }
+    } catch (error) {
+      toast({ title: 'Ошибка', description: 'Не удалось сохранить пример', variant: 'destructive' });
+    }
+    
+    setShowSaveDialog(false);
+  };
+
+  const handleAdminAccess = () => {
+    if (password === '123') {
+      setIsAdminAuthenticated(true);
+      setShowPasswordDialog(false);
+      setPassword('');
+      toast({ title: 'Добро пожаловать!', description: 'Вы успешно вошли в админ-панель' });
+    } else {
+      toast({ 
+        title: 'Ой, вы ввели неправильный пароль', 
+        description: 'Возможно вы не администратор сайта. Попробуйте подать заявку в нашем телеграмм канале!',
+        variant: 'destructive'
+      });
+      setPassword('');
+    }
   };
 
   const clear = () => {
@@ -160,26 +212,43 @@ export default function Index() {
             <p className="text-muted-foreground mt-1">Научный калькулятор с расширенными функциями</p>
           </div>
           
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="outline" size="lg" className="rounded-full">
-                <Icon name="Settings" className="mr-2" />
-                Админ-панель
-              </Button>
-            </SheetTrigger>
-            <SheetContent className="w-[400px] sm:w-[540px]">
-              <SheetHeader>
-                <SheetTitle>Панель администратора</SheetTitle>
-              </SheetHeader>
-              <div className="mt-6 space-y-6">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="ad-toggle">Показывать рекламу</Label>
-                  <Switch
-                    id="ad-toggle"
-                    checked={showAd}
-                    onCheckedChange={setShowAd}
-                  />
-                </div>
+          <div className="flex items-center gap-3">
+            <Button 
+              variant="outline" 
+              size="lg" 
+              className="rounded-full"
+              onClick={() => setIsDarkMode(!isDarkMode)}
+            >
+              <Icon name={isDarkMode ? "Sun" : "Moon"} className="mr-2" />
+              {isDarkMode ? 'Светлая' : 'Тёмная'}
+            </Button>
+            
+            <Sheet open={isAdminAuthenticated} onOpenChange={(open) => {
+              if (open && !isAdminAuthenticated) {
+                setShowPasswordDialog(true);
+              } else if (!open) {
+                setIsAdminAuthenticated(false);
+              }
+            }}>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="lg" className="rounded-full">
+                  <Icon name="Settings" className="mr-2" />
+                  Админ-панель
+                </Button>
+              </SheetTrigger>
+              <SheetContent className="w-[400px] sm:w-[540px]">
+                <SheetHeader>
+                  <SheetTitle>Панель администратора</SheetTitle>
+                </SheetHeader>
+                <div className="mt-6 space-y-6">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="ad-toggle">Показывать рекламу</Label>
+                    <Switch
+                      id="ad-toggle"
+                      checked={showAd}
+                      onCheckedChange={setShowAd}
+                    />
+                  </div>
                 
                 <div className="space-y-2">
                   <h3 className="text-sm font-semibold">Статистика</h3>
@@ -221,7 +290,52 @@ export default function Index() {
               </div>
             </SheetContent>
           </Sheet>
+          </div>
         </div>
+
+        <AlertDialog open={showPasswordDialog} onOpenChange={setShowPasswordDialog}>
+          <AlertDialogContent className="rounded-3xl">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Вход в админ-панель</AlertDialogTitle>
+              <AlertDialogDescription>
+                Введите пароль для доступа к панели администратора
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <Input 
+              type="password" 
+              placeholder="Введите пароль"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleAdminAccess()}
+              className="rounded-xl"
+            />
+            <AlertDialogFooter>
+              <AlertDialogCancel className="rounded-full" onClick={() => setPassword('')}>Отмена</AlertDialogCancel>
+              <AlertDialogAction className="rounded-full" onClick={handleAdminAccess}>Войти</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        <AlertDialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
+          <AlertDialogContent className="rounded-3xl">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Сохранить пример?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Хотите ли вы сохранить пример который вы считали?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            {lastCalculation && (
+              <Card className="p-4 bg-muted/50 rounded-2xl">
+                <div className="text-sm text-muted-foreground">{lastCalculation.expression}</div>
+                <div className="text-lg font-semibold">= {lastCalculation.result}</div>
+              </Card>
+            )}
+            <AlertDialogFooter>
+              <AlertDialogCancel className="rounded-full">Нет</AlertDialogCancel>
+              <AlertDialogAction className="rounded-full" onClick={saveToDatabase}>Да</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
